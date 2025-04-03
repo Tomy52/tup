@@ -214,7 +214,7 @@ public class Main {
         Integer sumaCuadrados;
 
         sumaCuadrados = numerosSinFiltrar.stream()
-                .filter(Filtros.esImpar)
+                .filter(Filtros.esPar.negate())
                 .map(Matematica::cuadrado)
                 .reduce(0, Integer::sum);
 

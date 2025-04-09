@@ -122,9 +122,33 @@ BEGIN
              JOIN libros l
                   ON d_v.libro_id = l.libro_id
     GROUP BY c.cliente_id
-    HAVING MAX(precio)
+    ORDER BY SUM(d_v.cantidad * l.precio) DESC
     LIMIT 1;
     RETURN id_clienteGastador;
 END //
+DELIMITER ;
+
+DROP FUNCTION obtenerClienteMasGastador;
 
 SELECT obtenerClienteMasGastador();
+
+-- Ej 4
+
+DELIMITER //
+CREATE FUNCTION obtenerLibroMasVendidoPorAnio(anio INT)
+    RETURNS INT
+    DETERMINISTIC
+BEGIN
+    DECLARE id_libro_mas_vendido INT;
+    SELECT l.libro_id into id_libro_mas_vendido
+    FROM libros l
+             JOIN Detalle_Venta d_v on l.libro_id = d_v.libro_id
+             JOIN ventas v ON d_v.venta_id = v.venta_id
+    WHERE YEAR(fecha_venta) = anio
+    GROUP BY l.libro_id
+    ORDER BY SUM(cantidad) DESC
+    LIMIT 1;
+    RETURN id_libro_mas_vendido;
+end //
+
+SELECT obtenerLibroMasVendidoPorAnio(2025);

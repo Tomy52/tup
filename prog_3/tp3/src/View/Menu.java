@@ -2,18 +2,22 @@ package View;
 
 import Controller.Exception.NoAutorizadoException;
 import Controller.Exception.NoEncontradoException;
+import Controller.Implementation.CuentaController;
 import Controller.Implementation.UsuarioController;
+import Model.Implementation.Cuenta.Cuenta;
 import Model.Implementation.Usuario.Usuario;
 
 import javax.security.auth.login.CredentialException;
 import java.util.Scanner;
 
 public class Menu {
-    private final UsuarioController controlador;
+    private final UsuarioController controladorUsuarios;
+    private final CuentaController controladorCuentas;
     private final Scanner scanner;
 
     public Menu() {
-        controlador = new UsuarioController();
+        controladorUsuarios = new UsuarioController();
+        controladorCuentas = new CuentaController(controladorUsuarios);
         scanner = new Scanner(System.in);
     }
 
@@ -34,18 +38,21 @@ public class Menu {
 
                 default -> System.out.println("Opción no válida. Intente de nuevo.");
             }
-        } while (opcion != 0 && controlador.obtenerLogueado().getId_usuario() == 0);
+        } while (opcion != 0 && controladorUsuarios.obtenerLogueado().getId_usuario() == 0);
         mostrarMenuLogueado();
     }
 
     public void mostrarMenuLogueado() {
         int opcion;
-        if (controlador.obtenerLogueado().getId_usuario() != 0) {
+        if (controladorUsuarios.obtenerLogueado().getId_usuario() != 0) {
             do {
                 System.out.println("1. Agregar Usuario");
                 System.out.println("2. Listar usuarios registrados");
                 System.out.println("3. Buscar usuario por dni o email");
                 System.out.println("4. Modificar usuario por su id");
+                System.out.println("5. Eliminar usuario por su id");
+                System.out.println("6. Agregar/abrir una cuenta");
+                System.out.println("7. Ver todas las cuentas");
                 System.out.println("0. Salir");
                 System.out.print("Seleccione una opción: ");
                 opcion = scanner.nextInt();
@@ -56,6 +63,9 @@ public class Menu {
                     case 2 -> verTodosLosUsuarios();
                     case 3 -> verUsuario();
                     case 4 -> modificarUsuario();
+                    case 5 -> eliminarUsuario();
+                    case 6 -> agregarCuenta();
+                    case 7 -> verTodasLasCuentas();
                     case 0 -> System.out.println("Saliendo...");
 
                     default -> System.out.println("Opción no válida. Intente de nuevo.");
@@ -75,7 +85,7 @@ public class Menu {
         System.out.print("Email: ");
         String email = scanner.nextLine();
 
-        controlador.agregar(nombre, apellido, dni, email);
+        controladorUsuarios.agregar(nombre, apellido, dni, email);
         System.out.println("Usuario agregado exitosamente.");
     }
 
@@ -86,8 +96,8 @@ public class Menu {
         String pass = scanner.nextLine();
 
         try {
-            controlador.iniciarSesion(username,pass);
-            System.out.println("Hola " + controlador.obtenerLogueado().getNombre());
+            controladorUsuarios.iniciarSesion(username,pass);
+            System.out.println("Hola " + controladorUsuarios.obtenerLogueado().getNombre());
         } catch (CredentialException e) {
             System.out.println(e.getMessage());
         }
@@ -96,7 +106,7 @@ public class Menu {
 
     private void verTodosLosUsuarios() {
         try {
-            for (Usuario usuario: controlador.obtenerTodos()) {
+            for (Usuario usuario: controladorUsuarios.obtenerTodos()) {
                 System.out.println("\n" + usuario + "\n");
             }
         } catch (NoAutorizadoException e) {
@@ -117,7 +127,7 @@ public class Menu {
         }
 
         try {
-            System.out.println(controlador.buscar(dni,email));
+            System.out.println(controladorUsuarios.buscar(dni,email));
         } catch (NoAutorizadoException | NoEncontradoException e) {
             System.out.println(e.getMessage());
         }
@@ -159,7 +169,45 @@ public class Menu {
             System.out.println("Nuevo valor: ");
             String valor = scanner.nextLine();
 
-            controlador.modificar(parametro,valor,id_usuario);
+            controladorUsuarios.modificar(parametro,valor,id_usuario);
+            System.out.println("Usuario modificado exitosamente.");
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void eliminarUsuario() {
+        System.out.print("Id usuario: ");
+        int id = Integer.parseInt(scanner.nextLine());
+
+        try {
+            controladorUsuarios.eliminar(id);
+            System.out.println("Usuario eliminado exitosamente.");
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void agregarCuenta() {
+        System.out.print("Id usuario titular: ");
+        int id_usuario = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Tipo cuenta (caja de ahorro o cuenta corriente): ");
+        String tipoCuenta = scanner.nextLine();
+
+        try {
+            controladorCuentas.agregar(id_usuario,tipoCuenta);
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void verTodasLasCuentas() {
+        try {
+            for (Cuenta cuenta: controladorCuentas.obtenerTodos()) {
+                System.out.println("\n" + cuenta + "\n");
+            }
         } catch (NoAutorizadoException e) {
             System.out.println(e.getMessage());
         }

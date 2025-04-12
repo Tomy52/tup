@@ -9,30 +9,6 @@ public class Usuario {
     private String fecha_creacion;
     private NivelPermisoUsuario nivelPermisos;
 
-    public Usuario(int id_usuario, String nombre, String apellido, String dni, String email, String fecha_creacion) {
-        this.id_usuario = id_usuario;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.email = email;
-        this.fecha_creacion = fecha_creacion;
-    }
-
-    public Usuario(String nombre, String apellido, String dni, String email, String fecha_creacion) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.email = email;
-        this.fecha_creacion = fecha_creacion;
-    }
-
-    public Usuario(String nombre, String apellido, String dni, String email) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.email = email;
-    }
-
     public Usuario() {}
 
     public int getId_usuario() {

@@ -1,6 +1,7 @@
 package Model.Implementation.Usuario;
 
 import Model.Implementation.ConexionMySQL;
+import Model.Interface.Dao;
 
 import java.sql.Connection;
 import java.sql.*;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UsuarioDao {
+public class UsuarioDao implements Dao<Usuario> {
 
     private final Connection conexion;
 
@@ -16,6 +17,7 @@ public class UsuarioDao {
         conexion = ConexionMySQL.getInstancia().getConexion();
     }
 
+    @Override
     public void agregar(Usuario usuario) {
         String agregarUsuarioQuery = "CALL agregarUsuario(?,?,?,?)";
         try (PreparedStatement statement = conexion.prepareStatement(agregarUsuarioQuery)) {
@@ -76,6 +78,7 @@ public class UsuarioDao {
         return resultado;
     }
 
+    @Override
     public List<Usuario> obtenerTodos() {
         List<Usuario> lista = new ArrayList<>();
         String obtenerUsuariosQuery = "SELECT * FROM usuariosCredenciales";
@@ -104,15 +107,16 @@ public class UsuarioDao {
         }
     }
 
-    //    public void eliminar(int idAlumnoEliminar) {
-//        String removeAlumnoQuery = "DELETE FROM alumnos WHERE id=" + idAlumnoEliminar;
-//
-//        try (Statement statement = connection.createStatement()) {
-//            statement.execute(removeAlumnoQuery);
-//        } catch (SQLException e) {
-//            System.out.println("Error removiendo alumno id = " + idAlumnoEliminar + " : " + e.getMessage());
-//        }
-//    }
-//
+    @Override
+    public void eliminar(int id_usuario) {
+        String eliminarUsuarioQuery = "CALL eliminarUsuario(?)";
+
+        try (PreparedStatement statement = conexion.prepareStatement(eliminarUsuarioQuery)) {
+            statement.setInt(1,id_usuario);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("Error eliminando usuario: " + e.getMessage());
+        }
+    }
 
 }

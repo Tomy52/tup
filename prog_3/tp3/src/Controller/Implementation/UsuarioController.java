@@ -84,9 +84,16 @@ public class UsuarioController {
         dao.modificarUsuario(parametro,valor,id_usuario);
     }
 
-//
-//    public void eliminarAlumno(int id) {
-//        dao.eliminar(id);
-//    }
+
+    public void eliminar(int id_usuario) throws NoAutorizadoException {
+        String nivelUsuario = obtenerLogueado().getNivelPermisos().toString();
+        if (obtenerLogueado().getNivelPermisos().toString().equals("CLIENTE")) {
+            throw new NoAutorizadoException("El usuario no tiene los permisos necesarios para realizar esta accion");
+        }
+        if (nivelUsuario.equals("GESTOR") && !esCliente(id_usuario)) {
+            throw new NoAutorizadoException("Los gestores solo pueden eliminar clientes");
+        }
+        dao.eliminar(id_usuario);
+    }
 
 }

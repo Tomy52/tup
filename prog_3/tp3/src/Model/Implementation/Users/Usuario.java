@@ -1,14 +1,15 @@
 package Model.Implementation.Users;
 
-public class User {
+public class Usuario {
     private int id_usuario;
     private String nombre;
     private String apellido;
     private String dni;
     private String email;
     private String fecha_creacion;
+    private NivelPermisoUsuario nivelPermisos;
 
-    public User(int id_usuario, String nombre, String apellido, String dni, String email, String fecha_creacion) {
+    public Usuario(int id_usuario, String nombre, String apellido, String dni, String email, String fecha_creacion) {
         this.id_usuario = id_usuario;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -17,7 +18,7 @@ public class User {
         this.fecha_creacion = fecha_creacion;
     }
 
-    public User(String nombre, String apellido, String dni, String email, String fecha_creacion) {
+    public Usuario(String nombre, String apellido, String dni, String email, String fecha_creacion) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -25,14 +26,14 @@ public class User {
         this.fecha_creacion = fecha_creacion;
     }
 
-    public User(String nombre, String apellido, String dni, String email) {
+    public Usuario(String nombre, String apellido, String dni, String email) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
         this.email = email;
     }
 
-    public User() {}
+    public Usuario() {}
 
     public int getId_usuario() {
         return id_usuario;
@@ -80,5 +81,24 @@ public class User {
 
     public void setFecha_creacion(String fecha_creacion) {
         this.fecha_creacion = fecha_creacion;
+    }
+
+    public NivelPermisoUsuario getNivelPermisos() {
+        return nivelPermisos;
+    }
+
+    public void setNivelPermisos(String nivelPermisos) {
+        this.nivelPermisos = NivelPermisoUsuario.valueOf(nivelPermisos);
+    }
+
+    @Override
+    public String toString() {
+        return "Id usuario: " + id_usuario + "\n" +
+                "Nombre: " + nombre + "\n" +
+                "Apellido: " + apellido + "\n" +
+                "Documento: " + dni + "\n" +
+                "Email: " + email + "\n" +
+                "Fecha de creacion: " + fecha_creacion + "\n" +
+                "Nivel de permisos: " + nivelPermisos;
     }
 }

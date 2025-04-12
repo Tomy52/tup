@@ -84,55 +84,50 @@ CREATE PROCEDURE agregarUsuario(IN nombreAgregar VARCHAR(255),
                                 IN apellidoAgregar VARCHAR(255),
                                 IN dniAgregar VARCHAR(255),
                                 IN emailAgregar VARCHAR(255))
-    BEGIN
-        DECLARE idUsuarioAgregar INT;
-        DECLARE usernameAgregar VARCHAR(255);
-        START TRANSACTION;
-        INSERT INTO usuarios(nombre, apellido, dni, email, fecha_creacion)
-            VALUES(nombreAgregar,apellidoAgregar,dniAgregar,emailAgregar,NOW());
+BEGIN
+    DECLARE idUsuarioAgregar INT;
+    DECLARE usernameAgregar VARCHAR(255);
+    START TRANSACTION;
+    INSERT INTO usuarios(nombre, apellido, dni, email, fecha_creacion)
+    VALUES(nombreAgregar,apellidoAgregar,dniAgregar,emailAgregar,NOW());
 
-        SET idUsuarioAgregar = LAST_INSERT_ID();
-        SET usernameAgregar = CONCAT(nombreAgregar,apellidoAgregar);
+    SET idUsuarioAgregar = LAST_INSERT_ID();
+    SET usernameAgregar = CONCAT(nombreAgregar,apellidoAgregar);
 
-        CALL verificarNombreUsuario(usernameAgregar);
+    CALL verificarNombreUsuario(usernameAgregar);
 
-        INSERT INTO credenciales(id_usuario,username,pass,permiso)
-            VALUES(idUsuarioAgregar,usernameAgregar,'1234','CLIENTE');
+    INSERT INTO credenciales(id_usuario,username,pass,permiso)
+    VALUES(idUsuarioAgregar,usernameAgregar,'1234','CLIENTE');
 
 
-        CALL verificarUnaSolaCajaAhorro(idUsuarioAgregar);
+    CALL verificarUnaSolaCajaAhorro(idUsuarioAgregar);
 
-        INSERT INTO cuentas(id_usuario,tipo,saldo,fecha_creacion)
-            VALUES(idUsuarioAgregar,'CAJA_AHORRO', 0, NOW());
-        COMMIT;
-    END //
+    INSERT INTO cuentas(id_usuario,tipo,saldo,fecha_creacion)
+    VALUES(idUsuarioAgregar,'CAJA_AHORRO', 0, NOW());
+    COMMIT;
+END //
 DELIMITER ;
 
 CALL agregarUsuario('Juan','Perez','12345678','juan.perez@email.com');
 
+CREATE VIEW usuariosCredenciales AS
+SELECT u.*,c.username,c.pass,c.permiso
+FROM usuarios u
+         JOIN credenciales c
+              ON u.id_usuario = c.id_usuario;
+
+SELECT * FROM usuariosCredenciales;
+
 DELIMITER //
 
-CREATE PROCEDURE verificarCredenciales(IN usernameVerificar VARCHAR(255), IN passVerificar VARCHAR(255))
+CREATE PROCEDURE login(IN usernameVerificar VARCHAR(255), IN passVerificar VARCHAR(255))
 BEGIN
-    DECLARE encontrado INT;
-    SELECT COUNT(*) INTO encontrado
-    FROM credenciales
+    SELECT *
+    FROM usuariosCredenciales
     WHERE username = usernameVerificar AND pass = passVerificar;
-
-    IF encontrado = 0 THEN
-        SIGNAL SQLSTATE '45001'
-            SET MESSAGE_TEXT = 'Las credenciales son incorrectas';
-    END IF;
 END //
 
 DELIMITER ;
 
-DROP PROCEDURE verificarCredenciales;
+UPDATE usuariosCredenciales SET pass = '1234' WHERE id_usuario = 1;
 
-CREATE PROCEDURE traerUsuario(IN idUsuarioTraer INT)
-BEGIN
-    -- Hay que hacer esto para el login. Hacer select con el where incluyendo user y pass
-    SELECT *
-    FROM usuarios
-    WHERE username = usernameVerificar AND pass = passVerificar;
-end;

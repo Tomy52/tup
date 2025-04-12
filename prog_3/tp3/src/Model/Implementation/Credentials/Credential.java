@@ -1,13 +1,15 @@
 package Model.Implementation.Credentials;
 
+import Model.Implementation.Users.NivelPermisoUsuario;
+
 public class Credential {
     private int id_credencial;
     private int id_usuario;
     private String username;
     private String pass;
-    private PermissionLevel permiso;
+    private NivelPermisoUsuario permiso;
 
-    public Credential(int id_credencial, int id_usuario, String username, String pass, PermissionLevel permiso) {
+    public Credential(int id_credencial, int id_usuario, String username, String pass, NivelPermisoUsuario permiso) {
         this.id_credencial = id_credencial;
         this.id_usuario = id_usuario;
         this.username = username;
@@ -50,11 +52,11 @@ public class Credential {
         this.pass = pass;
     }
 
-    public PermissionLevel getPermiso() {
+    public NivelPermisoUsuario getPermiso() {
         return permiso;
     }
 
-    public void setPermiso(PermissionLevel permiso) {
+    public void setPermiso(NivelPermisoUsuario permiso) {
         this.permiso = permiso;
     }
 }

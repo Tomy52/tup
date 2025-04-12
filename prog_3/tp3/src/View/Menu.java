@@ -2,27 +2,44 @@ package View;
 
 import Controller.Exception.NoAutorizadoException;
 import Controller.Exception.NoEncontradoException;
-import Controller.Implementation.UserController;
-import Model.Implementation.Users.Usuario;
+import Controller.Implementation.UsuarioController;
+import Model.Implementation.Usuario.Usuario;
 
 import javax.security.auth.login.CredentialException;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Menu {
-    private final UserController userController;
+    private final UsuarioController controlador;
     private final Scanner scanner;
 
     public Menu() {
-        userController = new UserController();
+        controlador = new UsuarioController();
         scanner = new Scanner(System.in);
     }
 
     public void mostrarMenu() {
-        while(userController.obtenerUsuarioLogueado().getId_usuario() == 0) {
-            iniciarSesion();
-        }
+        while(controlador.obtenerLogueado().getId_usuario() == 0) {
+            int opcion;
+            do {
+                System.out.println("1. Iniciar sesion");
+                System.out.println("2. Registrar usuario");
+                System.out.println("0. Salir");
+                System.out.print("Seleccione una opción: ");
+                opcion = scanner.nextInt();
+                scanner.nextLine();
 
+                switch (opcion) {
+                    case 1 -> iniciarSesion();
+                    case 2 -> agregarUsuario();
+                    case 0 -> System.out.println("Saliendo...");
+
+                    default -> System.out.println("Opción no válida. Intente de nuevo.");
+                }
+            } while (opcion != 0);
+        }
+    }
+
+    public void mostrarMenuLogueado() {
         int opcion;
         do {
             System.out.println("1. Agregar Usuario");
@@ -43,8 +60,9 @@ public class Menu {
 
                 default -> System.out.println("Opción no válida. Intente de nuevo.");
             }
-        } while (opcion != 0);
+        } while (opcion != 0 && controlador.obtenerLogueado().getId_usuario() != 0);
     }
+
 
     private void agregarUsuario() {
         System.out.print("Nombre: ");
@@ -56,7 +74,7 @@ public class Menu {
         System.out.print("Email: ");
         String email = scanner.nextLine();
 
-        userController.agregar(nombre, apellido, dni, email);
+        controlador.agregar(nombre, apellido, dni, email);
         System.out.println("Usuario agregado exitosamente.");
     }
 
@@ -64,11 +82,11 @@ public class Menu {
         System.out.print("Usuario: ");
         String username = scanner.nextLine();
         System.out.print("Contraseña: ");
-        String password = scanner.nextLine();
+        String pass = scanner.nextLine();
 
         try {
-            userController.iniciarSesion(username,password);
-            System.out.println("Hola " + userController.obtenerUsuarioLogueado().getNombre());
+            controlador.iniciarSesion(username,pass);
+            System.out.println("Hola " + controlador.obtenerLogueado().getNombre());
         } catch (CredentialException e) {
             System.out.println(e.getMessage());
         }
@@ -77,7 +95,7 @@ public class Menu {
 
     private void verTodosLosUsuarios() {
         try {
-            for (Usuario usuario: userController.obtenerTodos()) {
+            for (Usuario usuario: controlador.obtenerTodos()) {
                 System.out.println("\n" + usuario + "\n");
             }
         } catch (NoAutorizadoException e) {
@@ -98,14 +116,13 @@ public class Menu {
         }
 
         try {
-            System.out.println(userController.buscarUsuario(dni,email));
+            System.out.println(controlador.buscar(dni,email));
         } catch (NoAutorizadoException | NoEncontradoException e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void modificarUsuario() {
-        //no es seguro pero para el contexto del tp sirve
         try {
             int opcion;
             String parametro = "";
@@ -141,7 +158,7 @@ public class Menu {
             System.out.println("Nuevo valor: ");
             String valor = scanner.nextLine();
 
-            userController.modificarUsuario(parametro,valor,id_usuario);
+            controlador.modificar(parametro,valor,id_usuario);
         } catch (NoAutorizadoException e) {
             System.out.println(e.getMessage());
         }

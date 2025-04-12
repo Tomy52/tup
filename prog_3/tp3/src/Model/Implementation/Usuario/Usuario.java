@@ -1,4 +1,4 @@
-package Model.Implementation.Users;
+package Model.Implementation.Usuario;
 
 public class Usuario {
     private int id_usuario;

@@ -18,49 +18,50 @@ public class Menu {
     }
 
     public void mostrarMenu() {
-        while(controlador.obtenerLogueado().getId_usuario() == 0) {
-            int opcion;
-            do {
-                System.out.println("1. Iniciar sesion");
-                System.out.println("2. Registrar usuario");
-                System.out.println("0. Salir");
-                System.out.print("Seleccione una opción: ");
-                opcion = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (opcion) {
-                    case 1 -> iniciarSesion();
-                    case 2 -> agregarUsuario();
-                    case 0 -> System.out.println("Saliendo...");
-
-                    default -> System.out.println("Opción no válida. Intente de nuevo.");
-                }
-            } while (opcion != 0);
-        }
-    }
-
-    public void mostrarMenuLogueado() {
         int opcion;
         do {
-            System.out.println("1. Agregar Usuario");
-            System.out.println("2. Listar usuarios registrados");
-            System.out.println("3. Buscar usuario por dni o email");
-            System.out.println("4. Modificar usuario por su id");
+            System.out.println("1. Iniciar sesion");
+            System.out.println("2. Registrar usuario");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
             scanner.nextLine();
 
             switch (opcion) {
-                case 1 -> agregarUsuario();
-                case 2 -> verTodosLosUsuarios();
-                case 3 -> verUsuario();
-                case 4 -> modificarUsuario();
+                case 1 -> iniciarSesion();
+                case 2 -> agregarUsuario();
                 case 0 -> System.out.println("Saliendo...");
 
                 default -> System.out.println("Opción no válida. Intente de nuevo.");
             }
-        } while (opcion != 0 && controlador.obtenerLogueado().getId_usuario() != 0);
+        } while (opcion != 0 && controlador.obtenerLogueado().getId_usuario() == 0);
+        mostrarMenuLogueado();
+    }
+
+    public void mostrarMenuLogueado() {
+        int opcion;
+        if (controlador.obtenerLogueado().getId_usuario() != 0) {
+            do {
+                System.out.println("1. Agregar Usuario");
+                System.out.println("2. Listar usuarios registrados");
+                System.out.println("3. Buscar usuario por dni o email");
+                System.out.println("4. Modificar usuario por su id");
+                System.out.println("0. Salir");
+                System.out.print("Seleccione una opción: ");
+                opcion = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (opcion) {
+                    case 1 -> agregarUsuario();
+                    case 2 -> verTodosLosUsuarios();
+                    case 3 -> verUsuario();
+                    case 4 -> modificarUsuario();
+                    case 0 -> System.out.println("Saliendo...");
+
+                    default -> System.out.println("Opción no válida. Intente de nuevo.");
+                }
+            } while (opcion != 0);
+        }
     }
 
 

@@ -72,7 +72,6 @@ public class UsuarioController {
 
     public void modificar(String parametro, String valor, int id_usuario) throws NoAutorizadoException {
         String nivelUsuario = obtenerLogueado().getNivelPermisos().toString();
-        dao.modificarUsuario(parametro,valor,id_usuario);
         if (parametro.equals("permiso") && !nivelUsuario.equals("ADMINISTRADOR")) {
             throw new NoAutorizadoException("El usuario no tiene los permisos necesarios para realizar esta accion");
         }
@@ -82,6 +81,7 @@ public class UsuarioController {
         if (nivelUsuario.equals("GESTOR") && !esCliente(id_usuario)) {
             throw new NoAutorizadoException("Los gestores solo pueden modificar clientes");
         }
+        dao.modificarUsuario(parametro,valor,id_usuario);
     }
 
 //

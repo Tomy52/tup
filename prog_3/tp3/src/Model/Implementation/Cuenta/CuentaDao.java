@@ -1,11 +1,11 @@
 package Model.Implementation.Cuenta;
 
 import Model.Implementation.ConexionMySQL;
+import Model.Implementation.Usuario.Usuario;
 import Model.Interface.Dao;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CuentaDao implements Dao<Cuenta> {
     private final Connection conexion;
@@ -61,5 +61,64 @@ public class CuentaDao implements Dao<Cuenta> {
             System.out.println("Error obteniendo cuentas: " + e.getMessage());
         }
         return resultados;
+    }
+
+    public Map<Integer,Cuenta> obtenerDeUsuario(int id_usuario) {
+        String obtenerCuentasDeUsuarioQuery = "CALL obtenerCuentasDeUsuario(?)";
+        Map<Integer,Cuenta> resultados = new HashMap<>();
+
+        try (PreparedStatement statement = conexion.prepareStatement(obtenerCuentasDeUsuarioQuery)) {
+            statement.setInt(1,id_usuario);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Cuenta cuenta = mapearCuenta(resultSet);
+                resultados.put(cuenta.getId_cuenta(),cuenta);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error obteniendo cuentas: " + e.getMessage());
+        }
+        return resultados;
+    }
+
+    public void depositar(int id_cuenta, double monto) {
+        String depositarQuery = "CALL depositar(?,?)";
+
+        try(PreparedStatement statement = conexion.prepareStatement(depositarQuery)) {
+            statement.setInt(1,id_cuenta);
+            statement.setDouble(2,monto);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("Error depositando: " + e.getMessage());
+        }
+    }
+
+    public Optional<Cuenta> obtenerCuenta(int id_cuenta) {
+        Optional<Cuenta> resultado = Optional.empty();
+        String obtenerCuentaQuery = "CALL buscarCuenta(?)";
+
+        try (PreparedStatement statement = conexion.prepareStatement(obtenerCuentaQuery)) {
+            statement.setInt(1,id_cuenta);
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                resultado = Optional.of(mapearCuenta(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error obteniendo cuenta: " + e.getMessage());
+        }
+
+        return resultado;
+    }
+
+    public void transferir(int id_cuentaOrigen, int id_cuentaDestino, double monto) {
+        String transferirQuery = "CALL transferir(?,?,?)";
+
+        try (PreparedStatement statement = conexion.prepareStatement(transferirQuery)) {
+            statement.setInt(1,id_cuentaOrigen);
+            statement.setInt(2,id_cuentaDestino);
+            statement.setDouble(3,monto);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("Error obteniendo cuenta: " + e.getMessage());
+        }
     }
 }

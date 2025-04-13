@@ -63,6 +63,11 @@ public class Usuario {
         return nivelPermisos;
     }
 
+    public String getNivelPermisosString() {
+        return nivelPermisos.toString();
+    }
+
+
     public void setNivelPermisos(String nivelPermisos) {
         this.nivelPermisos = NivelPermisoUsuario.valueOf(nivelPermisos);
     }

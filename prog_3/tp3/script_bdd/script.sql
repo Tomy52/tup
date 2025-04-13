@@ -71,7 +71,7 @@ BEGIN
     WHERE username = usernameVerificar;
 
     IF encontrado > 0 THEN
-        SIGNAL SQLSTATE '45000'
+        SIGNAL SQLSTATE '45001'
             SET MESSAGE_TEXT = 'El nombre de usuario ya existe';
     END IF;
 END //
@@ -108,8 +108,6 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL agregarUsuario('Juan','Perez','12345678','juan.perez@email.com');
-
 CREATE VIEW usuariosCredenciales AS
 SELECT u.*,c.username,c.pass,c.permiso
 FROM usuarios u
@@ -129,5 +127,141 @@ END //
 
 DELIMITER ;
 
-UPDATE usuariosCredenciales SET pass = '1234' WHERE id_usuario = 1;
+DELIMITER //
+
+CREATE PROCEDURE buscarUsuario(IN idUsuarioBuscar INT)
+BEGIN
+    SELECT *
+    FROM usuariosCredenciales
+    WHERE id_usuario = idUsuarioBuscar;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE verificarUsuarioNoExiste(IN usernameVerificar VARCHAR(255))
+BEGIN
+    DECLARE encontrado INT;
+    SELECT COUNT(*) INTO encontrado
+    FROM credenciales cred JOIN cuentas c on cred.id_usuario = c.id_usuario
+    WHERE username = usernameVerificar;
+
+    IF encontrado > 0 THEN
+        SIGNAL SQLSTATE '45002'
+            SET MESSAGE_TEXT = 'Existen registros remanentes del usuario';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE eliminarUsuario(IN idUsuarioEliminar INT)
+BEGIN
+    START TRANSACTION;
+    DELETE
+    FROM usuarios
+    WHERE id_usuario = idUsuarioEliminar;
+    CALL verificarUsuarioNoExiste(idUsuarioEliminar);
+    COMMIT;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE eliminarUsuario;
+
+CREATE VIEW usuariosCuentas AS
+    SELECT u.nombre,u.apellido,c.*
+    FROM usuarios u JOIN cuentas c
+    ON u.id_usuario = c.id_usuario;
+
+
+DELIMITER //
+
+CREATE PROCEDURE crearCuenta(IN idUsuarioTitular INT, IN tipoCuenta VARCHAR(255))
+BEGIN
+    START TRANSACTION;
+    IF tipoCuenta = 'CAJA_AHORRO' THEN
+        CALL verificarUnaSolaCajaAhorro(idUsuarioTitular);
+    END IF;
+    INSERT INTO cuentas(id_usuario,tipo,saldo,fecha_creacion)
+        VALUES(idUsuarioTitular,tipoCuenta,0,NOW());
+    COMMIT;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE verificarSaldoEsCero(IN idCuentaEliminar INT)
+BEGIN
+    DECLARE saldoCuentaEliminar INT;
+    SELECT saldo INTO saldoCuentaEliminar FROM cuentas WHERE id_cuenta = idCuentaEliminar;
+    IF saldoCuentaEliminar != 0 THEN
+        SIGNAL SQLSTATE '45003'
+            SET MESSAGE_TEXT = 'El saldo de la cuenta no es 0';
+    END IF;
+end //
+
+DELIMITER //
+
+CREATE PROCEDURE eliminarCuenta(IN idCuentaEliminar INT)
+BEGIN
+    START TRANSACTION;
+    CALL verificarSaldoEsCero(idCuentaEliminar);
+    DELETE FROM cuentas WHERE id_cuenta = idCuentaEliminar;
+    COMMIT;
+END//
+
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE obtenerCuentasDeUsuario(IN idUsuarioTitular INT)
+BEGIN
+    SELECT * FROM cuentas
+        WHERE id_usuario = idUsuarioTitular;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE verificarMontoNoNegativo(IN montoVerificar DOUBLE)
+BEGIN
+    IF montoVerificar < 0 THEN
+        SIGNAL SQLSTATE '45004' SET MESSAGE_TEXT = "El monto no puede ser inferior a 0";
+        ELSE
+        SELECT 'exito' AS estado_verificacion;
+    END IF;
+end //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE depositar(IN idCuentaDepositar INT, IN monto DOUBLE)
+BEGIN
+    START TRANSACTION;
+    CALL verificarMontoNoNegativo(monto);
+    UPDATE cuentas SET saldo = saldo + monto
+    WHERE id_cuenta = idCuentaDepositar;
+    COMMIT;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE buscarCuenta(IN idCuentaBuscar INT)
+BEGIN
+    SELECT *
+    FROM cuentas
+    WHERE id_cuenta = idCuentaBuscar;
+END //
+
+DELIMITER ;
+
+
+
 

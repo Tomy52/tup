@@ -2,6 +2,7 @@ package View;
 
 import Controller.Exception.NoAutorizadoException;
 import Controller.Exception.NoEncontradoException;
+import Controller.Exception.NoExisteException;
 import Controller.Implementation.CuentaController;
 import Controller.Implementation.UsuarioController;
 import Model.Implementation.Cuenta.Cuenta;
@@ -53,6 +54,12 @@ public class Menu {
                 System.out.println("5. Eliminar usuario por su id");
                 System.out.println("6. Agregar/abrir una cuenta");
                 System.out.println("7. Ver todas las cuentas");
+                System.out.println("8. Ver las cuentas de un usuario");
+                System.out.println("9. Ver el saldo total de un usuario");
+                System.out.println("10. Depositar en una cuenta");
+                System.out.println("11. Transferir a otra cuenta");
+                System.out.println("12. Ver usuarios totales por permiso");
+                System.out.println("13. Ver cuentas totales por tipo");
                 System.out.println("0. Salir");
                 System.out.print("Seleccione una opción: ");
                 opcion = scanner.nextInt();
@@ -66,6 +73,12 @@ public class Menu {
                     case 5 -> eliminarUsuario();
                     case 6 -> agregarCuenta();
                     case 7 -> verTodasLasCuentas();
+                    case 8 -> verCuentasDeUsuario();
+                    case 9 -> verSaldoTotalDeUsuario();
+                    case 10 -> depositar();
+                    case 11 -> transferir();
+                    case 12 -> verUsuariosTotalesPorPermiso();
+                    case 13 -> verCuentasTotalesPorTipo();
                     case 0 -> System.out.println("Saliendo...");
 
                     default -> System.out.println("Opción no válida. Intente de nuevo.");
@@ -197,6 +210,7 @@ public class Menu {
 
         try {
             controladorCuentas.agregar(id_usuario,tipoCuenta);
+            System.out.println("Cuenta agregada exitosamente.");
         } catch (NoAutorizadoException e) {
             System.out.println(e.getMessage());
         }
@@ -208,6 +222,79 @@ public class Menu {
             for (Cuenta cuenta: controladorCuentas.obtenerTodos()) {
                 System.out.println("\n" + cuenta + "\n");
             }
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void verCuentasDeUsuario() {
+        System.out.print("Id usuario titular: ");
+        int id_usuario = Integer.parseInt(scanner.nextLine());
+
+        try {
+            for (Cuenta cuenta: controladorCuentas.obtenerDeUsuario(id_usuario)) {
+                System.out.println("\n" + cuenta + "\n");
+            }
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void verSaldoTotalDeUsuario() {
+        System.out.print("Id usuario titular: ");
+        int id_usuario = Integer.parseInt(scanner.nextLine());
+
+        try {
+            System.out.println("Saldo total: " + controladorCuentas.obtenerSaldoDeUsuario(id_usuario));
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void depositar() {
+        System.out.print("Id cuenta: ");
+        int id_cuenta = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Monto a depositar: ");
+        double monto = Double.parseDouble(scanner.nextLine());
+
+        try {
+            controladorCuentas.depositar(id_cuenta,monto);
+            System.out.println("Deposito exitoso.");
+        } catch (NoAutorizadoException | NoExisteException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void transferir() {
+        System.out.print("Id cuenta origen: ");
+        int id_cuentaOrigen = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Id cuenta destino: ");
+        int id_cuentaDestino = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Monto a transferir: ");
+        double monto = Double.parseDouble(scanner.nextLine());
+
+        try {
+            controladorCuentas.transferir(id_cuentaOrigen, id_cuentaDestino, monto);
+            System.out.println("Transferencia exitosa.");
+        } catch (NoAutorizadoException | NoExisteException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void verUsuariosTotalesPorPermiso() {
+        try {
+            System.out.println(controladorUsuarios.obtenerTotalPorPermiso());
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void verCuentasTotalesPorTipo() {
+        try {
+            System.out.println(controladorCuentas.obtenerTotalPorTipo());
         } catch (NoAutorizadoException e) {
             System.out.println(e.getMessage());
         }

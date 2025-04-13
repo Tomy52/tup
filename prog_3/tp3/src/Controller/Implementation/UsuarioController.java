@@ -2,13 +2,16 @@ package Controller.Implementation;
 
 import Controller.Exception.NoAutorizadoException;
 import Controller.Exception.NoEncontradoException;
+import Model.Implementation.Usuario.NivelPermisoUsuario;
 import Model.Implementation.Usuario.Usuario;
 import Model.Implementation.Usuario.UsuarioDao;
 
 import javax.security.auth.login.CredentialException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UsuarioController {
     private final UsuarioDao dao;
@@ -65,9 +68,9 @@ public class UsuarioController {
         return resultados.getFirst();
     }
 
-    private boolean esCliente(int id_usuario) {
-        Usuario usuarioModificar = Optional.of(obtener(id_usuario)).get().orElse(new Usuario());
-        return usuarioModificar.getNivelPermisos().toString().equals("CLIENTE");
+    public boolean esCliente(int id_usuario) {
+        Usuario usuario = Optional.of(obtener(id_usuario)).get().orElse(new Usuario());
+        return usuario.getNivelPermisos().toString().equals("CLIENTE");
     }
 
     public void modificar(String parametro, String valor, int id_usuario) throws NoAutorizadoException {
@@ -94,6 +97,14 @@ public class UsuarioController {
             throw new NoAutorizadoException("Los gestores solo pueden eliminar clientes");
         }
         dao.eliminar(id_usuario);
+    }
+
+    public Map<String,Long> obtenerTotalPorPermiso() throws NoAutorizadoException {
+        Map<String,Long> totalPorPermiso;
+
+        totalPorPermiso = obtenerTodos().stream().collect(Collectors.groupingBy(Usuario::getNivelPermisosString,Collectors.counting()));
+
+        return totalPorPermiso;
     }
 
 }

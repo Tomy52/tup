@@ -30,6 +30,10 @@ public class Cuenta {
         return tipoCuenta;
     }
 
+    public String getTipoCuentaString() {
+        return tipoCuenta.toString();
+    }
+
     public void setTipoCuenta(String tipoCuenta) {
         this.tipoCuenta = TipoCuenta.valueOf(tipoCuenta);
     }

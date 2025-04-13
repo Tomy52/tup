@@ -1,7 +1,6 @@
 package Model.Implementation.Cuenta;
 
 import Model.Implementation.ConexionMySQL;
-import Model.Implementation.Usuario.Usuario;
 import Model.Interface.Dao;
 
 import java.sql.*;

@@ -262,6 +262,40 @@ END //
 
 DELIMITER ;
 
+DELIMITER //
 
+CREATE PROCEDURE transferir(IN cuentaOrigen INT, IN cuentaDestino INT, IN monto DOUBLE)
+BEGIN
+    START TRANSACTION;
+    CALL verificarSaldoOrigen(cuentaOrigen,monto);
+    UPDATE cuentas SET saldo = saldo - monto WHERE id_cuenta = cuentaOrigen;
+    UPDATE cuentas SET saldo = saldo + monto WHERE id_cuenta = cuentaDestino;
+    COMMIT;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE verificarSaldoOrigen(IN cuentaOrigen INT, IN monto DOUBLE)
+BEGIN
+    DECLARE saldoOrigen DOUBLE;
+
+    SELECT c.saldo INTO saldoOrigen FROM cuentas c WHERE c.id_cuenta = cuentaOrigen;
+    IF (saldoOrigen - monto < 0) THEN
+        SIGNAL SQLSTATE '45005' SET MESSAGE_TEXT = 'No hay fondos suficientes';
+    ELSE
+        SELECT 'exito' AS estado_verificacion;
+    END IF;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE verificarSaldoOrigen;
+
+CREATE VIEW ids_usuarios AS (
+    SELECT id_usuario
+        FROM usuarios
+                            )
 
 

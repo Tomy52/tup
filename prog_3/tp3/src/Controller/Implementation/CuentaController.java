@@ -6,10 +6,9 @@ import Model.Implementation.Cuenta.Cuenta;
 import Model.Implementation.Cuenta.CuentaDao;
 import Model.Implementation.Usuario.Usuario;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import static java.util.Collections.reverseOrder;
 
 public class CuentaController {
     private final CuentaDao dao;
@@ -109,5 +108,47 @@ public class CuentaController {
         totalPorTipo = obtenerTodos().stream().collect(Collectors.groupingBy(Cuenta::getTipoCuentaString,Collectors.counting()));
 
         return totalPorTipo;
+    }
+
+    public Usuario obtenerUsuarioMasRico() throws NoAutorizadoException {
+        Usuario usuarioLogueado = controladorUsuario.obtenerLogueado();
+        String mensaje = "";
+
+        if (!usuarioLogueado.getNivelPermisos().toString().equals("ADMINISTRADOR")) {
+            throw new NoAutorizadoException("El usuario no tiene los permisos necesarios para realizar esta accion");
+        }
+
+        List<Integer> idsUsuarios = controladorUsuario.obtenerIdsUsuarios();
+        Map<Integer,Double> saldosUsuarios = new HashMap<>();
+
+        for (Integer id: idsUsuarios) {
+            double saldo = obtenerSaldoDeUsuario(id);
+            saldosUsuarios.put(id,saldo);
+        }
+
+        double maximo = saldosUsuarios.values().stream().max(Comparator.naturalOrder()).get();
+        int idUsuarioMasRico = saldosUsuarios.entrySet().stream().filter(user -> user.getValue() == maximo).toList().getFirst().getKey();
+
+        Usuario usuarioMasRico = controladorUsuario.obtener(idUsuarioMasRico).get();
+
+        return usuarioMasRico;
+    }
+
+    public List<Integer> obtenerUsuariosPorRiqueza() throws NoAutorizadoException {
+        Usuario usuarioLogueado = controladorUsuario.obtenerLogueado();
+
+        if (!usuarioLogueado.getNivelPermisos().toString().equals("ADMINISTRADOR")) {
+            throw new NoAutorizadoException("El usuario no tiene los permisos necesarios para realizar esta accion");
+        }
+
+        List<Integer> idsUsuarios = controladorUsuario.obtenerIdsUsuarios();
+        Map<Integer,Double> saldosUsuarios = new HashMap<>();
+
+        for (Integer id: idsUsuarios) {
+            double saldo = obtenerSaldoDeUsuario(id);
+            saldosUsuarios.put(id,saldo);
+        }
+
+        return saldosUsuarios.entrySet().stream().sorted(reverseOrder(Map.Entry.comparingByValue())).map(Map.Entry::getKey).toList();
     }
 }

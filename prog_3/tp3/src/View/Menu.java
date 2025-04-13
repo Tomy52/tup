@@ -60,6 +60,8 @@ public class Menu {
                 System.out.println("11. Transferir a otra cuenta");
                 System.out.println("12. Ver usuarios totales por permiso");
                 System.out.println("13. Ver cuentas totales por tipo");
+                System.out.println("14. Ver usuario con mayor saldo");
+                System.out.println("15. Ver usuarios ordenados por saldo");
                 System.out.println("0. Salir");
                 System.out.print("Seleccione una opción: ");
                 opcion = scanner.nextInt();
@@ -79,6 +81,8 @@ public class Menu {
                     case 11 -> transferir();
                     case 12 -> verUsuariosTotalesPorPermiso();
                     case 13 -> verCuentasTotalesPorTipo();
+                    case 14 -> verUsuarioMasRico();
+                    case 15 -> verUsuariosPorRiqueza();
                     case 0 -> System.out.println("Saliendo...");
 
                     default -> System.out.println("Opción no válida. Intente de nuevo.");
@@ -295,6 +299,22 @@ public class Menu {
     private void verCuentasTotalesPorTipo() {
         try {
             System.out.println(controladorCuentas.obtenerTotalPorTipo());
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void verUsuarioMasRico() {
+        try {
+            System.out.println(controladorCuentas.obtenerUsuarioMasRico());
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void verUsuariosPorRiqueza() {
+        try {
+            System.out.println(controladorCuentas.obtenerUsuariosPorRiqueza());
         } catch (NoAutorizadoException e) {
             System.out.println(e.getMessage());
         }

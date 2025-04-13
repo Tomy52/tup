@@ -119,4 +119,20 @@ public class UsuarioDao implements Dao<Usuario> {
         }
     }
 
+    public List<Integer> obtenerIdsUsuarios() {
+        String obtenerIdsQuery = "SELECT * FROM ids_usuarios";
+        List<Integer> ids = new ArrayList<>();
+
+        try (Statement statement = conexion.createStatement()) {
+            ResultSet resultados = statement.executeQuery(obtenerIdsQuery);
+            while (resultados.next()) {
+                ids.add(resultados.getInt("id_usuario"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error obteniendo ids: " + e.getMessage());
+        }
+
+        return ids;
+    }
+
 }

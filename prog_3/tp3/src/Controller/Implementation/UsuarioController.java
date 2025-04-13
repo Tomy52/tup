@@ -48,7 +48,7 @@ public class UsuarioController {
         return dao.obtenerTodos();
     }
 
-    private Optional<Usuario> obtener(int id_usuario) {
+    public Optional<Usuario> obtener(int id_usuario) {
         return dao.obtenerUsuario(id_usuario);
     }
 
@@ -105,6 +105,10 @@ public class UsuarioController {
         totalPorPermiso = obtenerTodos().stream().collect(Collectors.groupingBy(Usuario::getNivelPermisosString,Collectors.counting()));
 
         return totalPorPermiso;
+    }
+
+    public List<Integer> obtenerIdsUsuarios() {
+        return dao.obtenerIdsUsuarios();
     }
 
 }

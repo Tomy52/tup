@@ -48,7 +48,14 @@ public class UsuarioController {
         return dao.obtenerTodos();
     }
 
-    public Optional<Usuario> obtener(int id_usuario) {
+    public int obtenerIdPropio() {
+        return obtenerLogueado().getId_usuario();
+    }
+
+    public Optional<Usuario> obtener(int id_usuario) throws NoAutorizadoException {
+        if (obtenerLogueado().getNivelPermisos().toString().equals("CLIENTE") && id_usuario != obtenerIdPropio()) {
+            throw new NoAutorizadoException("Clientes solo pueden ver informacion propia");
+        }
         return dao.obtenerUsuario(id_usuario);
     }
 
@@ -68,7 +75,7 @@ public class UsuarioController {
         return resultados.getFirst();
     }
 
-    public boolean esCliente(int id_usuario) {
+    public boolean esCliente(int id_usuario) throws NoAutorizadoException {
         Usuario usuario = Optional.of(obtener(id_usuario)).get().orElse(new Usuario());
         return usuario.getNivelPermisos().toString().equals("CLIENTE");
     }

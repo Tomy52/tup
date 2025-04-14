@@ -112,7 +112,6 @@ public class CuentaController {
 
     public Usuario obtenerUsuarioMasRico() throws NoAutorizadoException {
         Usuario usuarioLogueado = controladorUsuario.obtenerLogueado();
-        String mensaje = "";
 
         if (!usuarioLogueado.getNivelPermisos().toString().equals("ADMINISTRADOR")) {
             throw new NoAutorizadoException("El usuario no tiene los permisos necesarios para realizar esta accion");
@@ -121,14 +120,20 @@ public class CuentaController {
         List<Integer> idsUsuarios = controladorUsuario.obtenerIdsUsuarios();
         Map<Integer,Double> saldosUsuarios = new HashMap<>();
 
+        //Se ponen los ids de cada usuario en el map como una key
+        //Y los saldos como un value
         for (Integer id: idsUsuarios) {
             double saldo = obtenerSaldoDeUsuario(id);
             saldosUsuarios.put(id,saldo);
         }
 
+        //Se obtiene el valor mas alto del map
         double maximo = saldosUsuarios.values().stream().max(Comparator.naturalOrder()).get();
+
+        //Se busca el usuario correspondiente a ese saldo
         int idUsuarioMasRico = saldosUsuarios.entrySet().stream().filter(user -> user.getValue() == maximo).toList().getFirst().getKey();
 
+        //Se devuelve la info de ese usuario
         Usuario usuarioMasRico = controladorUsuario.obtener(idUsuarioMasRico).get();
 
         return usuarioMasRico;
@@ -149,6 +154,10 @@ public class CuentaController {
             saldosUsuarios.put(id,saldo);
         }
 
+        //Se ordena por orden inverso, comparando los saldos de cada usuario
+        //Luego se deja solo el id de cada usuario y se los devuelve en una lista
         return saldosUsuarios.entrySet().stream().sorted(reverseOrder(Map.Entry.comparingByValue())).map(Map.Entry::getKey).toList();
+
+        //Podria haber hecho como hice en el anterior, pero preferi dejarlo como lista
     }
 }

@@ -62,6 +62,8 @@ public class Menu {
                 System.out.println("13. Ver cuentas totales por tipo");
                 System.out.println("14. Ver usuario con mayor saldo");
                 System.out.println("15. Ver usuarios ordenados por saldo");
+                System.out.println("16. Buscar usuarios por id");
+                System.out.println("17. Cual es mi id?");
                 System.out.println("0. Salir");
                 System.out.print("Seleccione una opción: ");
                 opcion = scanner.nextInt();
@@ -83,6 +85,8 @@ public class Menu {
                     case 13 -> verCuentasTotalesPorTipo();
                     case 14 -> verUsuarioMasRico();
                     case 15 -> verUsuariosPorRiqueza();
+                    case 16 -> verUsuarioPorId();
+                    case 17 -> cualEsMiId();
                     case 0 -> System.out.println("Saliendo...");
 
                     default -> System.out.println("Opción no válida. Intente de nuevo.");
@@ -206,11 +210,25 @@ public class Menu {
     }
 
     private void agregarCuenta() {
+        int opcion;
+        String tipoCuenta = "";
+
         System.out.print("Id usuario titular: ");
         int id_usuario = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Tipo cuenta (caja de ahorro o cuenta corriente): ");
-        String tipoCuenta = scanner.nextLine();
+        System.out.println("Tipo cuenta (caja de ahorro o cuenta corriente): ");
+        System.out.println("1. Caja de ahorro");
+        System.out.println("2. Cuenta corriente");
+        System.out.print("Seleccione una opción: ");
+
+        opcion = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (opcion) {
+            case 1 -> tipoCuenta = "CAJA_AHORRO";
+            case 2 -> tipoCuenta = "CUENTA_CORRIENTE";
+            default -> System.out.println("Opción no válida. Intente de nuevo.");
+        }
 
         try {
             controladorCuentas.agregar(id_usuario,tipoCuenta);
@@ -314,9 +332,25 @@ public class Menu {
 
     private void verUsuariosPorRiqueza() {
         try {
+            System.out.println("Id's usuarios (ordenados por saldo): ");
             System.out.println(controladorCuentas.obtenerUsuariosPorRiqueza());
         } catch (NoAutorizadoException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void verUsuarioPorId() {
+        System.out.print("Id usuario: ");
+        int id_usuario = Integer.parseInt(scanner.nextLine());
+
+        try {
+            System.out.println(controladorUsuarios.obtener(id_usuario));
+        } catch (NoAutorizadoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void cualEsMiId() {
+        System.out.println("Su id de usuario es: " + controladorUsuarios.obtenerIdPropio());
     }
 }

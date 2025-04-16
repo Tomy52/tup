@@ -270,8 +270,6 @@ CREATE TRIGGER actualizarStockProductosActualizacion
     FOR EACH ROW
     CALL actualizarStockProducto(NEW.ProductoID,NEW.Cantidad - OLD.Cantidad);
 
-DROP TRIGGER actualizarStockProductosActualizacion;
-
 -- Ej 12
 
 CREATE TRIGGER auditarInsercionProductos

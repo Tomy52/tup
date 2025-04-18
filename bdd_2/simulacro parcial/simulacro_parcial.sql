@@ -81,8 +81,6 @@ END//
 
 DELIMITER ;
 
-DROP PROCEDURE registrar_venta;
-
 CALL registrar_venta(1,7600,@idVenta);
 SELECT @idVenta;
 
@@ -127,12 +125,10 @@ SELECT COUNT(cliente_id) INTO cantidad FROM clientes
 WHERE cliente_id = cliente_idVerificar;
 IF (cantidad = 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El cliente no existe';
-end if;
-end //
+END IF;
+END //
 
 DELIMITER ;
-
-DROP PROCEDURE verificarExistenciaCliente;
 
 CALL verificarExistenciaCliente(25);
 
@@ -145,11 +141,9 @@ SELECT v.cliente_id,SUM(v.valor) AS total_vendido
 FROM ventas v
 WHERE v.cliente_id = cliente_idBuscado
 GROUP BY v.cliente_id;
-end //
+END //
 
 DELIMITER ;
-
-DROP PROCEDURE obtenerTotalVentasCliente;
 
 CALL obtenerTotalVentasCliente(2);
 
@@ -162,8 +156,8 @@ BEGIN
 SELECT stock INTO stock_actual FROM productos WHERE producto_id = producto_idVerificar;
 IF (stock_actual - nuevo_stock < 0) THEN
         SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El nuevo stock es negativo!';
-end if;
-end //
+END IF;
+END //
 
 DELIMITER ;
 
@@ -178,8 +172,8 @@ SELECT COUNT(producto_idVerificar) INTO cantidad FROM productos
 WHERE producto_id = producto_idVerificar;
 IF (cantidad = 0) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El producto no existe';
-end if;
-end //
+END IF;
+END //
 
 DELIMITER ;
 
@@ -189,12 +183,12 @@ BEGIN
 BEGIN
 SELECT 'Error actualizando stock';
 ROLLBACK;
-end;
+END;
     DECLARE EXIT HANDLER FOR SQLSTATE '45002'
 BEGIN
 SELECT 'Error actualizando stock';
 ROLLBACK;
-end;
+END;
 START TRANSACTION;
 CALL verificarExistenciaProducto(producto_idCambiar);
 CALL verificarStock(producto_idCambiar,nuevo_stock);
@@ -203,7 +197,5 @@ COMMIT;
 END;
 
 DELIMITER ;
-
-DROP PROCEDURE actualizarStock;
 
 CALL actualizarStock(1,30);

@@ -1,8 +1,9 @@
-package org.tomy52.tp3_conspring.Model.Implementation.Usuario;
+package org.tomy52.tp3_conspring.Repositories.Implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.tomy52.tp3_conspring.Model.Interface.Dao;
+import org.tomy52.tp3_conspring.Entities.Usuario.Usuario;
+import org.tomy52.tp3_conspring.Repositories.Interface.Dao;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

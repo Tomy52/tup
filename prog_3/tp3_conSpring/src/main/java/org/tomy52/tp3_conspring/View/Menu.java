@@ -7,8 +7,8 @@ import org.tomy52.tp3_conspring.Controller.Exception.NoEncontradoException;
 import org.tomy52.tp3_conspring.Controller.Exception.NoExisteException;
 import org.tomy52.tp3_conspring.Controller.Implementation.CuentaController;
 import org.tomy52.tp3_conspring.Controller.Implementation.UsuarioController;
-import org.tomy52.tp3_conspring.Model.Implementation.Cuenta.Cuenta;
-import org.tomy52.tp3_conspring.Model.Implementation.Usuario.Usuario;
+import org.tomy52.tp3_conspring.Entities.Cuenta.Cuenta;
+import org.tomy52.tp3_conspring.Entities.Usuario.Usuario;
 
 import javax.security.auth.login.CredentialException;
 import java.util.Scanner;

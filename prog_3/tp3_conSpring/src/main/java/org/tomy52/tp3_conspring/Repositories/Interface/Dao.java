@@ -1,4 +1,4 @@
-package org.tomy52.tp3_conspring.Model.Interface;
+package org.tomy52.tp3_conspring.Repositories.Interface;
 
 import java.util.List;
 

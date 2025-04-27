@@ -1,4 +1,4 @@
-package org.tomy52.tp3_conspring.Model.Implementation.Usuario;
+package org.tomy52.tp3_conspring.Entities.Usuario;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

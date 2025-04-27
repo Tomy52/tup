@@ -1,4 +1,4 @@
-package org.tomy52.tp3_conspring.Model.Implementation.Cuenta;
+package org.tomy52.tp3_conspring.Entities.Cuenta;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

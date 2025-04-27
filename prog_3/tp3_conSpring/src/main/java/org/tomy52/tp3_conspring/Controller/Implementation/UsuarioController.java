@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.tomy52.tp3_conspring.Controller.Exception.NoAutorizadoException;
 import org.tomy52.tp3_conspring.Controller.Exception.NoEncontradoException;
-import org.tomy52.tp3_conspring.Model.Implementation.Usuario.Usuario;
-import org.tomy52.tp3_conspring.Model.Implementation.Usuario.UsuarioDao;
+import org.tomy52.tp3_conspring.Entities.Usuario.Usuario;
+import org.tomy52.tp3_conspring.Repositories.Implementation.UsuarioDao;
 
 import javax.security.auth.login.CredentialException;
 import java.util.List;
